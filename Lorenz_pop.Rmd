@@ -1,0 +1,888 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(DescTools)
+library(ineq)
+library(readxl)
+library(openxlsx)
+library(writexl)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+require(ggrepel)
+require(reshape2)
+rnames<-c("전국","서울특별시","부산광역시","대구광역시","인천광역시","광주광역시","대전광역시","울산광역시","세종특별자치시","경기도","강원도","충청북도","충청남도","전라북도","전라남도", "경상북도","경상남도","제주특별자치도")
+srnames<-c("서울특별시","부산광역시","대구광역시","인천광역시","광주광역시","대전광역시","울산광역시","세종특별자치시","경기도","강원도","충청북도","충청남도","전라북도","전라남도", "경상북도","경상남도","제주특별자치도")
+zsrnames<-c("영점","서울특별시","부산광역시","대구광역시","인천광역시","광주광역시","대전광역시","울산광역시","세종특별자치시","경기도","강원도","충청북도","충청남도","전라북도","전라남도", "경상북도","경상남도","제주특별자치도")
+SIDOWA<-as.matrix(read_excel("SIDO_WAPOP.xlsx",sheet="WA_15-64",range="A1:AK19"))
+
+```
+
+```{r}
+#2022 sample
+
+workingage22<-as.data.frame(SIDOWA[-1,9]) #2022년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage22)<-c("number")
+
+#Add percentages
+workingage22$number<-as.numeric(workingage22$number)
+workingage22$percentage <- workingage22$number/sum(workingage22$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p22<-as.data.frame(Lc(workingage22$number)[[1]])#x축에 해당
+L22<-as.data.frame(Lc(workingage22$number)[[2]])#Ordinary Curve의 Y축
+L.GEN22<-as.data.frame(Lc(workingage22$number)[[3]])#Generalized Curve의 Y축
+LCDATA22<-cbind(p22,L22,L.GEN22)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage22<-cbind(workingage22,as.data.frame(rank(workingage22$number)))
+rownames(workingage22)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind22<-cbind(workingage22[order(workingage22$number),],p22[-1,],L22[-1,])
+Lorenzbind221<-rbind(c(0,0), as.data.frame(Lorenzbind22[,-c(1,2,3)]))
+colnames(Lorenzbind221)<-c("workingageppl","cumulative")
+
+```
+
+```{r}
+workingage23<-as.data.frame(SIDOWA[-1,10]) #2023년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage23)<-c("number")
+
+#Add percentages
+workingage23$number<-as.numeric(workingage23$number)
+workingage23$percentage <- workingage23$number/sum(workingage23$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p23<-as.data.frame(Lc(workingage23$number)[[1]])#x축에 해당
+L23<-as.data.frame(Lc(workingage23$number)[[2]])#Ordinary Curve의 Y축
+L.GEN23<-as.data.frame(Lc(workingage23$number)[[3]])#Generalized Curve의 Y축
+LCDATA23<-cbind(p23,L23,L.GEN23)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage23<-cbind(workingage23,as.data.frame(rank(workingage23$number)))
+rownames(workingage23)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind23<-cbind(workingage23[order(workingage23$number),],p23[-1,],L23[-1,])
+Lorenzbind231<-rbind(c(0,0), as.data.frame(Lorenzbind23[,-c(1,2,3)]))
+colnames(Lorenzbind231)<-c("workingageppl","cumulative")
+```
+
+
+```{r}
+
+workingage24<-as.data.frame(SIDOWA[-1,11]) #2024년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage24)<-c("number")
+
+#Add percentages
+workingage24$number<-as.numeric(workingage24$number)
+workingage24$percentage <- workingage24$number/sum(workingage24$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p24<-as.data.frame(Lc(workingage24$number)[[1]])#x축에 해당
+L24<-as.data.frame(Lc(workingage24$number)[[2]])#Ordinary Curve의 Y축
+L.GEN24<-as.data.frame(Lc(workingage24$number)[[3]])#Generalized Curve의 Y축
+LCDATA24<-cbind(p24,L24,L.GEN24)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage24<-cbind(workingage24,as.data.frame(rank(workingage24$number)))
+rownames(workingage24)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind24<-cbind(workingage24[order(workingage24$number),],p24[-1,],L24[-1,])
+Lorenzbind241<-rbind(c(0,0), as.data.frame(Lorenzbind24[,-c(1,2,3)]))
+colnames(Lorenzbind241)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage25<-as.data.frame(SIDOWA[-1,12]) #2025년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage25)<-c("number")
+
+#Add percentages
+workingage25$number<-as.numeric(workingage25$number)
+workingage25$percentage <- workingage25$number/sum(workingage25$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p25<-as.data.frame(Lc(workingage25$number)[[1]])#x축에 해당
+L25<-as.data.frame(Lc(workingage25$number)[[2]])#Ordinary Curve의 Y축
+L.GEN25<-as.data.frame(Lc(workingage25$number)[[3]])#Generalized Curve의 Y축
+LCDATA25<-cbind(p25,L25,L.GEN25)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage25<-cbind(workingage25,as.data.frame(rank(workingage25$number)))
+rownames(workingage25)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind25<-cbind(workingage25[order(workingage25$number),],p25[-1,],L25[-1,])
+Lorenzbind251<-rbind(c(0,0), as.data.frame(Lorenzbind25[,-c(1,2,3)]))
+colnames(Lorenzbind251)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage26<-as.data.frame(SIDOWA[-1,13]) #2026년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage26)<-c("number")
+
+#Add percentages
+workingage26$number<-as.numeric(workingage26$number)
+workingage26$percentage <- workingage26$number/sum(workingage26$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p26<-as.data.frame(Lc(workingage26$number)[[1]])#x축에 해당
+L26<-as.data.frame(Lc(workingage26$number)[[2]])#Ordinary Curve의 Y축
+L.GEN26<-as.data.frame(Lc(workingage26$number)[[3]])#Generalized Curve의 Y축
+LCDATA26<-cbind(p26,L26,L.GEN26)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage26<-cbind(workingage26,as.data.frame(rank(workingage26$number)))
+rownames(workingage26)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind26<-cbind(workingage26[order(workingage26$number),],p26[-1,],L26[-1,])
+Lorenzbind261<-rbind(c(0,0), as.data.frame(Lorenzbind26[,-c(1,2,3)]))
+colnames(Lorenzbind261)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage27<-as.data.frame(SIDOWA[-1,14]) #2027년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage27)<-c("number")
+
+#Add percentages
+workingage27$number<-as.numeric(workingage27$number)
+workingage27$percentage <- workingage27$number/sum(workingage27$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p27<-as.data.frame(Lc(workingage27$number)[[1]])#x축에 해당
+L27<-as.data.frame(Lc(workingage27$number)[[2]])#Ordinary Curve의 Y축
+L.GEN27<-as.data.frame(Lc(workingage27$number)[[3]])#Generalized Curve의 Y축
+LCDATA27<-cbind(p27,L27,L.GEN27)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage27<-cbind(workingage27,as.data.frame(rank(workingage27$number)))
+rownames(workingage27)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind27<-cbind(workingage27[order(workingage27$number),],p27[-1,],L27[-1,])
+Lorenzbind271<-rbind(c(0,0), as.data.frame(Lorenzbind27[,-c(1,2,3)]))
+colnames(Lorenzbind271)<-c("workingageppl","cumulative")
+```
+
+```{r}
+workingage28<-as.data.frame(SIDOWA[-1,15]) #2028년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage28)<-c("number")
+
+#Add percentages
+workingage28$number<-as.numeric(workingage28$number)
+workingage28$percentage <- workingage28$number/sum(workingage28$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p28<-as.data.frame(Lc(workingage28$number)[[1]])#x축에 해당
+L28<-as.data.frame(Lc(workingage28$number)[[2]])#Ordinary Curve의 Y축
+L.GEN28<-as.data.frame(Lc(workingage28$number)[[3]])#Generalized Curve의 Y축
+LCDATA28<-cbind(p28,L28,L.GEN28)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage28<-cbind(workingage28,as.data.frame(rank(workingage28$number)))
+rownames(workingage28)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind28<-cbind(workingage28[order(workingage28$number),],p28[-1,],L28[-1,])
+Lorenzbind281<-rbind(c(0,0), as.data.frame(Lorenzbind28[,-c(1,2,3)]))
+colnames(Lorenzbind281)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage29<-as.data.frame(SIDOWA[-1,16]) #2029년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage29)<-c("number")
+
+#Add percentages
+workingage29$number<-as.numeric(workingage29$number)
+workingage29$percentage <- workingage29$number/sum(workingage29$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p29<-as.data.frame(Lc(workingage29$number)[[1]])#x축에 해당
+L29<-as.data.frame(Lc(workingage29$number)[[2]])#Ordinary Curve의 Y축
+L.GEN29<-as.data.frame(Lc(workingage29$number)[[3]])#Generalized Curve의 Y축
+LCDATA29<-cbind(p29,L29,L.GEN29)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage29<-cbind(workingage29,as.data.frame(rank(workingage29$number)))
+rownames(workingage29)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind29<-cbind(workingage29[order(workingage29$number),],p29[-1,],L29[-1,])
+Lorenzbind291<-rbind(c(0,0), as.data.frame(Lorenzbind29[,-c(1,2,3)]))
+colnames(Lorenzbind291)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage30<-as.data.frame(SIDOWA[-1,17]) #2030년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage30)<-c("number")
+
+#Add percentages
+workingage30$number<-as.numeric(workingage30$number)
+workingage30$percentage <- workingage30$number/sum(workingage30$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p30<-as.data.frame(Lc(workingage30$number)[[1]])#x축에 해당
+L30<-as.data.frame(Lc(workingage30$number)[[2]])#Ordinary Curve의 Y축
+L.GEN30<-as.data.frame(Lc(workingage30$number)[[3]])#Generalized Curve의 Y축
+LCDATA30<-cbind(p30,L30,L.GEN30)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage30<-cbind(workingage30,as.data.frame(rank(workingage30$number)))
+rownames(workingage30)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind30<-cbind(workingage30[order(workingage30$number),],p30[-1,],L30[-1,])
+Lorenzbind301<-rbind(c(0,0), as.data.frame(Lorenzbind30[,-c(1,2,3)]))
+colnames(Lorenzbind301)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage31<-as.data.frame(SIDOWA[-1,18]) #2031년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage31)<-c("number")
+
+#Add percentages
+workingage31$number<-as.numeric(workingage31$number)
+workingage31$percentage <- workingage31$number/sum(workingage31$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p31<-as.data.frame(Lc(workingage31$number)[[1]])#x축에 해당
+L31<-as.data.frame(Lc(workingage31$number)[[2]])#Ordinary Curve의 Y축
+L.GEN31<-as.data.frame(Lc(workingage31$number)[[3]])#Generalized Curve의 Y축
+LCDATA31<-cbind(p31,L31,L.GEN31)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage31<-cbind(workingage31,as.data.frame(rank(workingage31$number)))
+rownames(workingage31)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind31<-cbind(workingage31[order(workingage31$number),],p31[-1,],L31[-1,])
+Lorenzbind311<-rbind(c(0,0), as.data.frame(Lorenzbind31[,-c(1,2,3)]))
+colnames(Lorenzbind311)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage32<-as.data.frame(SIDOWA[-1,19]) #2032년의 벡터 만듦 #9자리에 for i 2:37 
+colnames(workingage32)<-c("number")
+
+#Add percentages
+workingage32$number<-as.numeric(workingage32$number)
+workingage32$percentage <- workingage32$number/sum(workingage32$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p32<-as.data.frame(Lc(workingage32$number)[[1]])#x축에 해당
+L32<-as.data.frame(Lc(workingage32$number)[[2]])#Ordinary Curve의 Y축
+L.GEN32<-as.data.frame(Lc(workingage32$number)[[3]])#Generalized Curve의 Y축
+LCDATA32<-cbind(p32,L32,L.GEN32)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage32<-cbind(workingage32,as.data.frame(rank(workingage32$number)))
+rownames(workingage32)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind32<-cbind(workingage32[order(workingage32$number),],p32[-1,],L32[-1,])
+Lorenzbind321<-rbind(c(0,0), as.data.frame(Lorenzbind32[,-c(1,2,3)]))
+colnames(Lorenzbind321)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage33<-as.data.frame(SIDOWA[-1,20]) #2033년의 벡터 만듦
+colnames(workingage33)<-c("number")
+
+#Add percentages
+workingage33$number<-as.numeric(workingage33$number)
+workingage33$percentage <- workingage33$number/sum(workingage33$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p33<-as.data.frame(Lc(workingage33$number)[[1]])#x축에 해당
+L33<-as.data.frame(Lc(workingage33$number)[[2]])#Ordinary Curve의 Y축
+L.GEN33<-as.data.frame(Lc(workingage33$number)[[3]])#Generalized Curve의 Y축
+LCDATA33<-cbind(p33,L33,L.GEN33)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage33<-cbind(workingage33,as.data.frame(rank(workingage33$number)))
+rownames(workingage33)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind33<-cbind(workingage33[order(workingage33$number),],p33[-1,],L33[-1,])
+Lorenzbind331<-rbind(c(0,0), as.data.frame(Lorenzbind33[,-c(1,2,3)]))
+colnames(Lorenzbind331)<-c("workingageppl","cumulative")
+```
+
+```{r}
+workingage34<-as.data.frame(SIDOWA[-1,21]) #2034년의 벡터 만듦
+colnames(workingage34)<-c("number")
+
+#Add percentages
+workingage34$number<-as.numeric(workingage34$number)
+workingage34$percentage <- workingage34$number/sum(workingage34$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p34<-as.data.frame(Lc(workingage34$number)[[1]])#x축에 해당
+L34<-as.data.frame(Lc(workingage34$number)[[2]])#Ordinary Curve의 Y축
+L.GEN34<-as.data.frame(Lc(workingage34$number)[[3]])#Generalized Curve의 Y축
+LCDATA34<-cbind(p34,L34,L.GEN34)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage34<-cbind(workingage34,as.data.frame(rank(workingage34$number)))
+rownames(workingage34)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind34<-cbind(workingage34[order(workingage34$number),],p34[-1,],L34[-1,])
+Lorenzbind341<-rbind(c(0,0), as.data.frame(Lorenzbind34[,-c(1,2,3)]))
+colnames(Lorenzbind341)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage35<-as.data.frame(SIDOWA[-1,22]) #2035년의 벡터 만듦
+colnames(workingage35)<-c("number")
+
+#Add percentages
+workingage35$number<-as.numeric(workingage35$number)
+workingage35$percentage <- workingage35$number/sum(workingage35$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p35<-as.data.frame(Lc(workingage35$number)[[1]])#x축에 해당
+L35<-as.data.frame(Lc(workingage35$number)[[2]])#Ordinary Curve의 Y축
+L.GEN35<-as.data.frame(Lc(workingage35$number)[[3]])#Generalized Curve의 Y축
+LCDATA35<-cbind(p35,L35,L.GEN35)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage35<-cbind(workingage35,as.data.frame(rank(workingage35$number)))
+rownames(workingage35)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind35<-cbind(workingage35[order(workingage35$number),],p35[-1,],L35[-1,])
+Lorenzbind351<-rbind(c(0,0), as.data.frame(Lorenzbind35[,-c(1,2,3)]))
+colnames(Lorenzbind351)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage36<-as.data.frame(SIDOWA[-1,23]) #2036년의 벡터 만듦
+colnames(workingage36)<-c("number")
+
+#Add percentages
+workingage36$number<-as.numeric(workingage36$number)
+workingage36$percentage <- workingage36$number/sum(workingage36$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p36<-as.data.frame(Lc(workingage36$number)[[1]])#x축에 해당
+L36<-as.data.frame(Lc(workingage36$number)[[2]])#Ordinary Curve의 Y축
+L.GEN36<-as.data.frame(Lc(workingage36$number)[[3]])#Generalized Curve의 Y축
+LCDATA36<-cbind(p36,L36,L.GEN36)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage36<-cbind(workingage36,as.data.frame(rank(workingage36$number)))
+rownames(workingage36)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind36<-cbind(workingage36[order(workingage36$number),],p36[-1,],L36[-1,])
+Lorenzbind361<-rbind(c(0,0), as.data.frame(Lorenzbind36[,-c(1,2,3)]))
+colnames(Lorenzbind361)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage37<-as.data.frame(SIDOWA[-1,24]) #2037년의 벡터 만듦
+colnames(workingage37)<-c("number")
+
+#Add percentages
+workingage37$number<-as.numeric(workingage37$number)
+workingage37$percentage <- workingage37$number/sum(workingage37$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p37<-as.data.frame(Lc(workingage37$number)[[1]])#x축에 해당
+L37<-as.data.frame(Lc(workingage37$number)[[2]])#Ordinary Curve의 Y축
+L.GEN37<-as.data.frame(Lc(workingage37$number)[[3]])#Generalized Curve의 Y축
+LCDATA37<-cbind(p37,L37,L.GEN37)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage37<-cbind(workingage37,as.data.frame(rank(workingage37$number)))
+rownames(workingage37)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind37<-cbind(workingage37[order(workingage37$number),],p37[-1,],L37[-1,])
+Lorenzbind371<-rbind(c(0,0), as.data.frame(Lorenzbind37[,-c(1,2,3)]))
+colnames(Lorenzbind371)<-c("workingageppl","cumulative")
+```
+
+```{r}
+workingage38<-as.data.frame(SIDOWA[-1,25]) #2038년의 벡터 만듦
+colnames(workingage38)<-c("number")
+
+#Add percentages
+workingage38$number<-as.numeric(workingage38$number)
+workingage38$percentage <- workingage38$number/sum(workingage38$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p38<-as.data.frame(Lc(workingage38$number)[[1]])#x축에 해당
+L38<-as.data.frame(Lc(workingage38$number)[[2]])#Ordinary Curve의 Y축
+L.GEN38<-as.data.frame(Lc(workingage38$number)[[3]])#Generalized Curve의 Y축
+LCDATA38<-cbind(p38,L38,L.GEN38)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage38<-cbind(workingage38,as.data.frame(rank(workingage38$number)))
+rownames(workingage38)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind38<-cbind(workingage38[order(workingage38$number),],p38[-1,],L38[-1,])
+Lorenzbind381<-rbind(c(0,0), as.data.frame(Lorenzbind38[,-c(1,2,3)]))
+colnames(Lorenzbind381)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage39<-as.data.frame(SIDOWA[-1,26]) #2039년의 벡터 만듦
+colnames(workingage39)<-c("number")
+
+#Add percentages
+workingage39$number<-as.numeric(workingage39$number)
+workingage39$percentage <- workingage39$number/sum(workingage39$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p39<-as.data.frame(Lc(workingage39$number)[[1]])#x축에 해당
+L39<-as.data.frame(Lc(workingage39$number)[[2]])#Ordinary Curve의 Y축
+L.GEN39<-as.data.frame(Lc(workingage39$number)[[3]])#Generalized Curve의 Y축
+LCDATA39<-cbind(p39,L39,L.GEN39)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage39<-cbind(workingage39,as.data.frame(rank(workingage39$number)))
+rownames(workingage39)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind39<-cbind(workingage39[order(workingage39$number),],p39[-1,],L39[-1,])
+Lorenzbind391<-rbind(c(0,0), as.data.frame(Lorenzbind39[,-c(1,2,3)]))
+colnames(Lorenzbind391)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage40<-as.data.frame(SIDOWA[-1,27]) #2040년의 벡터 만듦
+colnames(workingage40)<-c("number")
+
+#Add percentages
+workingage40$number<-as.numeric(workingage40$number)
+workingage40$percentage <- workingage40$number/sum(workingage40$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p40<-as.data.frame(Lc(workingage40$number)[[1]])#x축에 해당
+L40<-as.data.frame(Lc(workingage40$number)[[2]])#Ordinary Curve의 Y축
+L.GEN40<-as.data.frame(Lc(workingage40$number)[[3]])#Generalized Curve의 Y축
+LCDATA40<-cbind(p40,L40,L.GEN40)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage40<-cbind(workingage40,as.data.frame(rank(workingage40$number)))
+rownames(workingage40)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind40<-cbind(workingage40[order(workingage40$number),],p40[-1,],L40[-1,])
+Lorenzbind401<-rbind(c(0,0), as.data.frame(Lorenzbind40[,-c(1,2,3)]))
+colnames(Lorenzbind401)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage41<-as.data.frame(SIDOWA[-1,28]) #2041년의 벡터 만듦
+colnames(workingage41)<-c("number")
+
+#Add percentages
+workingage41$number<-as.numeric(workingage41$number)
+workingage41$percentage <- workingage41$number/sum(workingage41$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p41<-as.data.frame(Lc(workingage41$number)[[1]])#x축에 해당
+L41<-as.data.frame(Lc(workingage41$number)[[2]])#Ordinary Curve의 Y축
+L.GEN41<-as.data.frame(Lc(workingage41$number)[[3]])#Generalized Curve의 Y축
+LCDATA41<-cbind(p41,L41,L.GEN41)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage41<-cbind(workingage41,as.data.frame(rank(workingage41$number)))
+rownames(workingage41)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind41<-cbind(workingage41[order(workingage41$number),],p41[-1,],L41[-1,])
+Lorenzbind411<-rbind(c(0,0), as.data.frame(Lorenzbind41[,-c(1,2,3)]))
+colnames(Lorenzbind411)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage42<-as.data.frame(SIDOWA[-1,29]) #2042년의 벡터 만듦
+colnames(workingage42)<-c("number")
+
+#Add percentages
+workingage42$number<-as.numeric(workingage42$number)
+workingage42$percentage <- workingage42$number/sum(workingage42$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p42<-as.data.frame(Lc(workingage42$number)[[1]])#x축에 해당
+L42<-as.data.frame(Lc(workingage42$number)[[2]])#Ordinary Curve의 Y축
+L.GEN42<-as.data.frame(Lc(workingage42$number)[[3]])#Generalized Curve의 Y축
+LCDATA42<-cbind(p42,L42,L.GEN42)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage42<-cbind(workingage42,as.data.frame(rank(workingage42$number)))
+rownames(workingage42)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind42<-cbind(workingage42[order(workingage42$number),],p42[-1,],L42[-1,])
+Lorenzbind421<-rbind(c(0,0), as.data.frame(Lorenzbind42[,-c(1,2,3)]))
+colnames(Lorenzbind421)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage43<-as.data.frame(SIDOWA[-1,30]) #2043년의 벡터 만듦
+colnames(workingage43)<-c("number")
+
+#Add percentages
+workingage43$number<-as.numeric(workingage43$number)
+workingage43$percentage <- workingage43$number/sum(workingage43$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p43<-as.data.frame(Lc(workingage43$number)[[1]])#x축에 해당
+L43<-as.data.frame(Lc(workingage43$number)[[2]])#Ordinary Curve의 Y축
+L.GEN43<-as.data.frame(Lc(workingage43$number)[[3]])#Generalized Curve의 Y축
+LCDATA43<-cbind(p43,L43,L.GEN43)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage43<-cbind(workingage43,as.data.frame(rank(workingage43$number)))
+rownames(workingage43)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind43<-cbind(workingage43[order(workingage43$number),],p43[-1,],L43[-1,])
+Lorenzbind431<-rbind(c(0,0), as.data.frame(Lorenzbind43[,-c(1,2,3)]))
+colnames(Lorenzbind431)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage44<-as.data.frame(SIDOWA[-1,31]) #2044년의 벡터 만듦
+colnames(workingage44)<-c("number")
+
+#Add percentages
+workingage44$number<-as.numeric(workingage44$number)
+workingage44$percentage <- workingage44$number/sum(workingage44$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p44<-as.data.frame(Lc(workingage44$number)[[1]])#x축에 해당
+L44<-as.data.frame(Lc(workingage44$number)[[2]])#Ordinary Curve의 Y축
+L.GEN44<-as.data.frame(Lc(workingage44$number)[[3]])#Generalized Curve의 Y축
+LCDATA44<-cbind(p44,L44,L.GEN44)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage44<-cbind(workingage44,as.data.frame(rank(workingage44$number)))
+rownames(workingage44)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind44<-cbind(workingage44[order(workingage44$number),],p44[-1,],L44[-1,])
+Lorenzbind441<-rbind(c(0,0), as.data.frame(Lorenzbind44[,-c(1,2,3)]))
+colnames(Lorenzbind441)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage45<-as.data.frame(SIDOWA[-1,32]) #2045년의 벡터 만듦
+colnames(workingage45)<-c("number")
+
+#Add percentages
+workingage45$number<-as.numeric(workingage45$number)
+workingage45$percentage <- workingage45$number/sum(workingage45$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p45<-as.data.frame(Lc(workingage45$number)[[1]])#x축에 해당
+L45<-as.data.frame(Lc(workingage45$number)[[2]])#Ordinary Curve의 Y축
+L.GEN45<-as.data.frame(Lc(workingage45$number)[[3]])#Generalized Curve의 Y축
+LCDATA45<-cbind(p45,L45,L.GEN45)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage45<-cbind(workingage45,as.data.frame(rank(workingage45$number)))
+rownames(workingage45)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind45<-cbind(workingage45[order(workingage45$number),],p45[-1,],L45[-1,])
+Lorenzbind451<-rbind(c(0,0), as.data.frame(Lorenzbind45[,-c(1,2,3)]))
+colnames(Lorenzbind451)<-c("workingageppl","cumulative")
+```
+
+```{r}
+workingage46<-as.data.frame(SIDOWA[-1,33]) #2046년의 벡터 만듦
+colnames(workingage46)<-c("number")
+
+#Add percentages
+workingage46$number<-as.numeric(workingage46$number)
+workingage46$percentage <- workingage46$number/sum(workingage46$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p46<-as.data.frame(Lc(workingage46$number)[[1]])#x축에 해당
+L46<-as.data.frame(Lc(workingage46$number)[[2]])#Ordinary Curve의 Y축
+L.GEN46<-as.data.frame(Lc(workingage46$number)[[3]])#Generalized Curve의 Y축
+LCDATA46<-cbind(p46,L46,L.GEN46)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage46<-cbind(workingage46,as.data.frame(rank(workingage46$number)))
+rownames(workingage46)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind46<-cbind(workingage46[order(workingage46$number),],p46[-1,],L46[-1,])
+Lorenzbind461<-rbind(c(0,0), as.data.frame(Lorenzbind46[,-c(1,2,3)]))
+colnames(Lorenzbind461)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage47<-as.data.frame(SIDOWA[-1,34]) #2047년의 벡터 만듦
+colnames(workingage47)<-c("number")
+
+#Add percentages
+workingage47$number<-as.numeric(workingage47$number)
+workingage47$percentage <- workingage47$number/sum(workingage47$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p47<-as.data.frame(Lc(workingage47$number)[[1]])#x축에 해당
+L47<-as.data.frame(Lc(workingage47$number)[[2]])#Ordinary Curve의 Y축
+L.GEN47<-as.data.frame(Lc(workingage47$number)[[3]])#Generalized Curve의 Y축
+LCDATA47<-cbind(p47,L47,L.GEN47)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage47<-cbind(workingage47,as.data.frame(rank(workingage47$number)))
+rownames(workingage47)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind47<-cbind(workingage47[order(workingage47$number),],p47[-1,],L47[-1,])
+Lorenzbind471<-rbind(c(0,0), as.data.frame(Lorenzbind47[,-c(1,2,3)]))
+colnames(Lorenzbind471)<-c("workingageppl","cumulative")
+```
+
+```{r}
+
+workingage48<-as.data.frame(SIDOWA[-1,35]) #2048년의 벡터 만듦
+colnames(workingage48)<-c("number")
+
+#Add percentages
+workingage48$number<-as.numeric(workingage48$number)
+workingage48$percentage <- workingage48$number/sum(workingage48$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p48<-as.data.frame(Lc(workingage48$number)[[1]])#x축에 해당
+L48<-as.data.frame(Lc(workingage48$number)[[2]])#Ordinary Curve의 Y축
+L.GEN48<-as.data.frame(Lc(workingage48$number)[[3]])#Generalized Curve의 Y축
+LCDATA48<-cbind(p48,L48,L.GEN48)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage48<-cbind(workingage48,as.data.frame(rank(workingage48$number)))
+rownames(workingage48)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind48<-cbind(workingage48[order(workingage48$number),],p48[-1,],L48[-1,])
+Lorenzbind481<-rbind(c(0,0), as.data.frame(Lorenzbind48[,-c(1,2,3)]))
+colnames(Lorenzbind481)<-c("workingageppl","cumulative")
+```
+
+```{r}
+workingage49<-as.data.frame(SIDOWA[-1,36]) #2049년의 벡터 만듦
+colnames(workingage49)<-c("number")
+
+#Add percentages
+workingage49$number<-as.numeric(workingage49$number)
+workingage49$percentage <- workingage49$number/sum(workingage49$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p49<-as.data.frame(Lc(workingage49$number)[[1]])#x축에 해당
+L49<-as.data.frame(Lc(workingage49$number)[[2]])#Ordinary Curve의 Y축
+L.GEN49<-as.data.frame(Lc(workingage49$number)[[3]])#Generalized Curve의 Y축
+LCDATA49<-cbind(p49,L49,L.GEN49)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage49<-cbind(workingage49,as.data.frame(rank(workingage49$number)))
+rownames(workingage49)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind49<-cbind(workingage49[order(workingage49$number),],p49[-1,],L49[-1,])
+Lorenzbind491<-rbind(c(0,0), as.data.frame(Lorenzbind49[,-c(1,2,3)]))
+colnames(Lorenzbind491)<-c("workingageppl","cumulative")
+```
+
+```{r}
+view(SIDOWA)
+workingage50<-as.data.frame(SIDOWA[-1,37]) #2050년의 벡터 만듦
+colnames(workingage50)<-c("number")
+
+#Add percentages
+workingage50$number<-as.numeric(workingage50$number)
+workingage50$percentage <- workingage50$number/sum(workingage50$number)
+#complete available data to test the ineq package.
+#Create GINI Index and a corresponding Lorenz Curve
+## Plot Lorenz Curve:
+#list데이터를 탐색하여 해당 시기 생산가능인구의 지니계수 살펴보기
+p50<-as.data.frame(Lc(workingage50$number)[[1]])#x축에 해당
+L50<-as.data.frame(Lc(workingage50$number)[[2]])#Ordinary Curve의 Y축
+L.GEN50<-as.data.frame(Lc(workingage50$number)[[3]])#Generalized Curve의 Y축
+LCDATA50<-cbind(p50,L50,L.GEN50)
+#>>해야할 것
+#곡선아래 면적 계산
+#어느지역이 어느 위치에 있는지 점 찍기
+workingage50<-cbind(workingage50,as.data.frame(rank(workingage50$number)))
+rownames(workingage50)<-srnames
+#rank숫자 작을수록(순위높을수록) 생산가능인구 수 비중 적은것
+Lorenzbind50<-cbind(workingage50[order(workingage50$number),],p50[-1,],L50[-1,])
+Lorenzbind501<-rbind(c(0,0), as.data.frame(Lorenzbind50[,-c(1,2,3)]))
+colnames(Lorenzbind501)<-c("workingageppl","cumulative")
+```
+
+```
+
+
+
+```{r}
+windows()
+lzplot<-ggplot() +theme_bw()+
+  
+  geom_point(data=Lorenzbind221,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind221))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind221,aes(x=workingageppl, y=cumulative), color="#361111")+
+  
+  geom_point(data=Lorenzbind231,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind231))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind231,aes(x=workingageppl, y=cumulative), color="#491717")+
+  
+  geom_point(data=Lorenzbind241,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind241))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind241,aes(x=workingageppl, y=cumulative), color="#5d1d1d")+
+  
+  geom_point(data=Lorenzbind251,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind251))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind251,aes(x=workingageppl, y=cumulative), color="#702323")+
+  
+  geom_point(data=Lorenzbind261,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind261))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind261,aes(x=workingageppl, y=cumulative), color="#832929")+
+  
+  geom_point(data=Lorenzbind271,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind271))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind271,aes(x=workingageppl, y=cumulative), color="#972f2f")+
+
+  geom_point(data=Lorenzbind281,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind281))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind281,aes(x=workingageppl, y=cumulative), color="#aa3535")+
+  
+  geom_point(data=Lorenzbind291,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind291))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind291,aes(x=workingageppl, y=cumulative), color="#b44582")+
+ 
+  geom_point(data=Lorenzbind301,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind301))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind301,aes(x=workingageppl, y=cumulative), color="#be548f")+
+ 
+  geom_point(data=Lorenzbind311,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind311))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind311,aes(x=workingageppl, y=cumulative), color="#c5679b")+
+
+  geom_point(data=Lorenzbind321,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind321))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind321,aes(x=workingageppl, y=cumulative), color="#cc79a7")+
+ 
+  geom_point(data=Lorenzbind331,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind331))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind331,aes(x=workingageppl, y=cumulative), color="#d38bb3")+ 
+
+  geom_point(data=Lorenzbind341,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind341))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind341,aes(x=workingageppl, y=cumulative), color="#da92bf")+ 
+
+  geom_point(data=Lorenzbind351,aes(x=workingageppl, y=cumulative,size=4,colour = factor(rownames(Lorenzbind351))))+
+  theme(legend.title=element_blank())+
+  geom_line(data=Lorenzbind351,aes(x=workingageppl, y=cumulative), color="#e1b0cb")+
+ 
+   
+  
+
+  theme(text=element_text(size=16,  family="serif"))+
+  
+   scale_x_continuous(name="전국대비생산가능인구비중(%)", limits=c(0,1)) + 
+  scale_y_continuous(name="누적생산가능인구비중(%)", limits=c(0,1)) +theme(legend.position='left')+
+  geom_abline(color="#000000")
+windows()
+print(lzplot)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
